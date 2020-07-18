@@ -124,6 +124,7 @@ namespace ExchangeSharp
         protected virtual Task<ExchangeCloseMarginPositionResult> OnCloseMarginPositionAsync(string marketSymbol) => throw new NotImplementedException();
         protected virtual Task<IWebSocket> OnGetTickersWebSocketAsync(Action<IReadOnlyCollection<KeyValuePair<string, ExchangeTicker>>> tickers, params string[] marketSymbols) => throw new NotImplementedException();
         protected virtual Task<IWebSocket> OnGetTradesWebSocketAsync(Func<KeyValuePair<string, ExchangeTrade>, Task> callback, params string[] marketSymbols) => throw new NotImplementedException();
+        protected virtual Task<IWebSocket> OnGetCandlesWebSocketAsync(Func<(string Symbol, MarketCandle Candle), Task> callback, int periodSeconds, params string[] marketSymbols) => throw new NotImplementedException();
         protected virtual Task<IWebSocket> OnGetDeltaOrderBookWebSocketAsync(Action<ExchangeOrderBook> callback, int maxCount = 20, params string[] marketSymbols) => throw new NotImplementedException();
         protected virtual Task<IWebSocket> OnGetOrderDetailsWebSocketAsync(Action<ExchangeOrderResult> callback) => throw new NotImplementedException();
         protected virtual Task<IWebSocket> OnGetCompletedOrderDetailsWebSocketAsync(Action<ExchangeOrderResult> callback) => throw new NotImplementedException();
@@ -953,6 +954,18 @@ namespace ExchangeSharp
 	        callback.ThrowIfNull(nameof(callback), "Callback must not be null");
 	        return OnUserDataWebSocketAsync(callback, listenKey);
         }
-		#endregion Web Socket API
-	}
+
+        /// <summary>
+        /// Get all candles via web socket
+        /// </summary>
+        /// <param name="callback">Callback</param>
+        /// <param name="symbols"></param>
+        /// <returns>Web socket, call Dispose to close</returns>
+        public Task<IWebSocket> GetCandlesWebSocketAsync(Func<(string Symbol, MarketCandle Candle), Task> callback, int periodSeconds, string[] symbols)
+        {
+            callback.ThrowIfNull(nameof(callback), "Callback must not be null");
+            return OnGetCandlesWebSocketAsync(callback, periodSeconds, symbols);
+        }
+        #endregion Web Socket API
+    }
 }

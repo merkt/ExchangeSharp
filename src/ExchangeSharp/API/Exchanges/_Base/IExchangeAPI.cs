@@ -262,6 +262,15 @@ namespace ExchangeSharp
         /// <returns>Web socket, call Dispose to close</returns>
         Task<IWebSocket> GetCompletedOrderDetailsWebSocketAsync(Action<ExchangeOrderResult> callback);
 
+        /// <summary>
+        /// Get candlestick parameters via web socket
+        /// </summary>
+        /// <param name="callback">Callback</param>
+        /// <param name="periodSeconds">Period in seconds to get candles for. Use 60 for minute, 3600 for hour, 3600*24 for day, 3600*24*30 for month.</param>
+        /// <param name="marketSymbols">Market symbols</param>
+        /// <returns>Web socket, call Dispose to close</returns>
+        Task<IWebSocket> GetCandlesWebSocketAsync(Func<(string Symbol, MarketCandle Candle), Task> callback, int periodSeconds, string[] symbols);
+
         #endregion Web Socket
     }
 }
